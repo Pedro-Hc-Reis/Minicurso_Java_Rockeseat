@@ -17,7 +17,7 @@ public class UserController {
     private IUserRepository userRepository;
 
     @PostMapping ( "/" )
-    public ResponseEntity create ( @RequestBody UserModel userModel ) {
+    public ResponseEntity<?> create ( @RequestBody UserModel userModel ) {
 
         if ( this.userRepository.existsByUsername ( userModel.getUsername ( ) ) ) {
             return ResponseEntity.badRequest ( ).body ( "Usuário já existe" );
