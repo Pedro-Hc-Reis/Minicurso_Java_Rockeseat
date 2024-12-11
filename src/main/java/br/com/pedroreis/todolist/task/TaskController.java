@@ -2,7 +2,6 @@ package br.com.pedroreis.todolist.task;
 
 import br.com.pedroreis.todolist.utils.Utils;
 import jakarta.servlet.http.HttpServletRequest;
-import jdk.jshell.execution.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -42,11 +41,14 @@ public class TaskController {
 
     @PutMapping ( "/{id}" )
     public ResponseEntity<?> update ( @RequestBody TaskModel taskModel , HttpServletRequest request , @PathVariable UUID id ) {
+        var idUser = ( UUID ) request.getAttribute ( "idUser" );
 
         var currentTask = this.taskRepository.findById ( id ).orElse ( null );
 
         if ( currentTask == null ) {
             return ResponseEntity.badRequest ( ).body ( "Task não encontrada com este id" );
+        } else if ( ! currentTask.getId ( ).equals ( idUser ) ) {
+            return ResponseEntity.badRequest ( ).body ( "Usuário não tem permissão para alterar essa tarefa" );
         }
 
         Utils.copyNonNullProperties ( taskModel , currentTask );
