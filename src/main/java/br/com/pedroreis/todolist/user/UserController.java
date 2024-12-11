@@ -1,6 +1,8 @@
 package br.com.pedroreis.todolist.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,13 +16,12 @@ public class UserController {
     private IUserRepository userRepository;
 
     @PostMapping ( "/" )
-    public UserModel create ( @RequestBody UserModel userModel ) {
+    public ResponseEntity create ( @RequestBody UserModel userModel ) {
 
-        if ( this.userRepository.existsByUsername ( userModel.getUsername () ) ){
-            System.err.println ( "Usuário já existe" );
-            return null;
+        if ( this.userRepository.existsByUsername ( userModel.getUsername ( ) ) ) {
+            return ResponseEntity.badRequest ( ).body ( "Usuário já existe" );
         }
 
-        return this.userRepository.save ( userModel );
+        return ResponseEntity.status ( HttpStatus.CREATED ).body ( this.userRepository.save ( userModel ) );
     }
 }
