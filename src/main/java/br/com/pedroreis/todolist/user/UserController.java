@@ -1,5 +1,6 @@
 package br.com.pedroreis.todolist.user;
 
+import at.favre.lib.crypto.bcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,6 +22,10 @@ public class UserController {
         if ( this.userRepository.existsByUsername ( userModel.getUsername ( ) ) ) {
             return ResponseEntity.badRequest ( ).body ( "Usuário já existe" );
         }
+
+        var passwordHashed = BCrypt.withDefaults ( ).hashToString ( 12 , userModel.getPassword ( ).toCharArray ( ) );
+
+        userModel.setPassword ( passwordHashed );
 
         return ResponseEntity.status ( HttpStatus.CREATED ).body ( this.userRepository.save ( userModel ) );
     }
